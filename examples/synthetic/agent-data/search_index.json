@@ -1,0 +1,12 @@
+{"messages": [
+  {"id": 10, "agent_id": "00000000-0000-4000-8000-000000000001", "entry_id": "e2", "role": "user", "timestamp_ms": 1790000000100, "body": "CANARY-MESSAGE-TEXT hello", "seq": 2},
+  {"id": 11, "agent_id": "00000000-0000-4000-8000-000000000001", "entry_id": "e3", "role": "assistant", "timestamp_ms": 1790000005000, "body": "CANARY-REPLY-TEXT", "seq": 3},
+  {"id": 12, "agent_id": "00000000-0000-4000-8000-000000000001", "entry_id": "t1a0", "role": "assistant", "timestamp_ms": 1790000006000, "body": "CANARY-SI-INSIDE-TRANSCRIPT-SPAN", "seq": 8},
+  {"id": 20, "agent_id": "00000000-0000-4000-8000-000000000001", "entry_id": "t2u", "role": "user", "timestamp_ms": 1790600000000, "body": "CANARY-SI-USER hello", "seq": 9},
+  {"id": 21, "agent_id": "00000000-0000-4000-8000-000000000001", "entry_id": "t2a0", "role": "assistant", "timestamp_ms": 1790600005000, "body": "CANARY-SI-REPLY yes", "seq": 10},
+  {"id": 22, "agent_id": "00000000-0000-4000-8000-000000000002", "entry_id": "t2a0", "role": "assistant", "timestamp_ms": 1790600010000, "body": "CANARY-SI-BETA-REPLY", "seq": 1}
+],
+"media": [
+  {"id": 5, "agent_id": "00000000-0000-4000-8000-000000000001", "entry_id": "e6", "file_name": "CANARY-SI-FILE.png", "ext": ".png", "mime": "image/CANARY-MIME", "kind": "image", "timestamp_ms": 1790000020000, "width": 10, "height": 10, "seq": 6},
+  {"id": 6, "agent_id": "00000000-0000-4000-8000-000000000002", "entry_id": "t3m", "file_name": "CANARY-SI-REPORT.pdf", "ext": ".pdf", "mime": "application/CANARY-MIME", "kind": "pdf", "timestamp_ms": 0, "width": null, "height": null, "seq": 2}
+]}

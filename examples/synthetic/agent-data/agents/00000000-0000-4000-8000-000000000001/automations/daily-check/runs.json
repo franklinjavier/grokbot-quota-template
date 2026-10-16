@@ -1,0 +1,2 @@
+[{"id": "run-1", "requestId": "req-2", "trigger": "schedule", "startedAt": 1790003600000, "finishedAt": 1790003700000, "status": "ok"},
+ {"id": "run-0", "trigger": "schedule", "startedAt": 1789917200000, "finishedAt": 1789917300000, "status": "error", "errorKind": "timeout", "detail": "CANARY-ERROR-DETAIL"}]

@@ -1,0 +1,14 @@
+{
+  "sessionId": "grok-sess-1",
+  "updatedAt": "2026-10-03T08:00:00.000000Z",
+  "session": {
+    "inputTokens": 100,
+    "outputTokens": 50,
+    "cachedReadTokens": 7,
+    "cacheCreationTokens": 8,
+    "reasoningTokens": 9,
+    "turnCount": 3,
+    "primaryModelId": "grok-4",
+    "costUsdTicks": 25000000000
+  }
+}

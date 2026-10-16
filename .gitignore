@@ -1,0 +1,24 @@
+# Runtime data: never commit a real quota database or a live dashboard.
+*.db
+*.db-*
+*.sqlite
+panel.html
+panel.html.tmp
+dashboard.html
+dashboard.html.tmp
+# The fake demo page is safe to publish. Live copies of dashboard.html stay ignored.
+!docs/demo/dashboard.html
+data/
+quota-data/
+agent-data/
+!examples/synthetic/agent-data/
+__pycache__/
+*.pyc
+*.png
+# Checked-in captures of the fake demo. Other images stay ignored.
+!docs/dashboard.png
+!docs/dashboard-mobile.png
+*.jpg
+*.jpeg
+*.gif
+*.webp

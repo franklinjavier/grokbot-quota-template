@@ -1,0 +1,4 @@
+{"role": "user", "message": {"content": [{"type": "text", "text": "CANARY-CHILD-PROMPT"}]}}
+{"role": "assistant", "message": {"content": [{"type": "tool_use", "name": "Computer", "input": {"action": "screenshot"}}, {"type": "tool_use", "name": "browser_navigate", "input": {"url": "https://example.com/CANARY-CHILD-URL"}}]}}
+{"role": "tool", "message": {"content": [{"type": "tool_result", "name": "computer_use", "result": {"error": {"error": "CANARY-ERROR"}}}]}}
+{"role": "assistant", "message": {"content": [{"type": "text", "text": "done"}]}}

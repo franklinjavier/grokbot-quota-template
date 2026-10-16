@@ -1,0 +1,1 @@
+{"name": "Daily check", "prompt": "CANARY-ROUTINE-PROMPT do the thing", "schedule": "0 9,15 * * *", "triggerPresentation": {"version": 1, "trigger": {"type": "cron", "schedule": "0 9,15 * * *"}}, "enabled": true, "provenance": "user", "createdAt": 1789000000000, "lastRunAt": 1790003700000}

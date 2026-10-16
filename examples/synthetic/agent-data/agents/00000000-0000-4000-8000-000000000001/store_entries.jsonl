@@ -1,0 +1,7 @@
+{"kind": "spend-initiation", "version": 1, "id": "e1", "agentId": "00000000-0000-4000-8000-000000000001", "requestId": "req-1", "timestampMs": 1790000000000, "initiation": {"type": "message", "id": "m1", "timestampMs": 1790000000000, "initiatingMessageCount": 1}}
+{"kind": "message", "id": "e2", "role": "user", "content": "CANARY-MESSAGE-TEXT hello", "isStreaming": false, "timestampMs": 1790000000100}
+{"kind": "send-message", "id": "e3", "message": {"type": "text", "content": "CANARY-REPLY-TEXT"}, "timestampMs": 1790000005000, "requestId": "req-1"}
+{"kind": "message", "id": "e4", "role": "user", "content": "ping from beta", "isStreaming": false, "timestampMs": 1790000010000, "fromAgent": {"id": "00000000-0000-4000-8000-000000000002", "name": "Beta Bot"}, "toAgent": null}
+{"kind": "spend-initiation", "version": 1, "id": "e5", "agentId": "00000000-0000-4000-8000-000000000001", "requestId": "req-2", "timestampMs": 1790003600000, "initiation": {"type": "automation", "id": "x", "timestampMs": 1790003600000}}
+{"kind": "user-attachment", "id": "e6", "file_path": "/secret/CANARY-PATH.png", "file_name": "CANARY-PATH.png", "batchId": "b", "clientNonce": "n", "width": 10, "height": 10, "byteSize": 2048, "timestampMs": 1790000020000}
+{"kind": "event", "id": "e7", "event": {"type": "automation-changed", "action": "created", "automationId": "daily-check", "automationName": "Daily check"}, "timestampMs": 1790000030000}

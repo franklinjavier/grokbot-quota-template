@@ -1,0 +1,6 @@
+{
+  "per_tool": {"daily_usd": 20, "weekly_usd": 75},
+  "per_bot": {"daily_usd": 20, "weekly_usd": 75},
+  "overrides": {"tools": {}, "bots": {}},
+  "week": "last 7 days ending today (Europe/Lisbon)"
+}

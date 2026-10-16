@@ -1,0 +1,173 @@
+#!/usr/bin/env python3
+"""Record one CLI launch, then exec the tool.
+
+usage: grokbot-run <bot_id> <task> -- claude|codex|grok [args...]
+
+Appends a single JSON line to
+${GROKBOT_QUOTA_STATE:-~/.local/state/grokbot-quota}/launches.jsonl
+and replaces this process with the tool. Arguments and prompts are not logged.
+When GROKBOT_QUOTA_STATE is unset and ~/.local/state cannot be written, the
+line goes to ~/.local/share/grokbot-quota/launches.jsonl and the tool still runs.
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import sys
+import uuid
+from datetime import datetime
+
+TOOLS = ("claude", "codex", "grok")
+USAGE = "usage: grokbot-run <bot_id> <task> -- claude|codex|grok [args...]\n"
+CLAUDE_SESSION_FLAGS = {"--session-id", "--resume", "-r", "--continue", "-c"}
+EXPLICIT_SESSION_FLAGS = {"--session-id", "--session", "--resume"}
+
+
+def launches_path() -> str:
+    raw = os.environ.get("GROKBOT_QUOTA_STATE")
+    base = os.path.expanduser(raw) if raw else os.path.expanduser("~/.local/state/grokbot-quota")
+    return os.path.join(base, "launches.jsonl")
+
+
+def share_launches_path() -> str:
+    return os.path.join(os.path.expanduser("~/.local/share/grokbot-quota"), "launches.jsonl")
+
+
+def save_launch(payload: dict) -> None:
+    """Append the line. The default state dir falls back to share when it cannot be written."""
+    try:
+        append_launch(launches_path(), payload)
+        return
+    except OSError:
+        if os.environ.get("GROKBOT_QUOTA_STATE"):
+            raise
+    append_launch(share_launches_path(), payload)
+
+
+def local_started_at() -> str:
+    """Local ISO 8601 with a colon in the UTC offset, e.g. 2026-10-14T18:10:00+01:00."""
+    dt = datetime.now().astimezone().replace(microsecond=0)
+    off = dt.strftime("%z") or "+0000"
+    return dt.strftime("%Y-%m-%dT%H:%M:%S") + off[:3] + ":" + off[3:]
+
+
+def flag_name(arg: str) -> str:
+    if arg.startswith("--"):
+        return arg.split("=", 1)[0]
+    return arg
+
+
+def option_value(args, index) -> str | None:
+    arg = args[index]
+    if arg.startswith("--") and "=" in arg:
+        value = arg.split("=", 1)[1]
+        return value or None
+    if index + 1 < len(args) and not args[index + 1].startswith("-"):
+        return args[index + 1]
+    return None
+
+
+def claude_session(args):
+    """Return (session_id or None, args to exec).
+
+    A fresh uuid is injected only when the command is not already bound to a
+    session. --session-id is recorded; resume/continue leave session_id null.
+    """
+    saw_session_id = False
+    suppress = False
+    session_id = None
+    for i, arg in enumerate(args):
+        name = flag_name(arg)
+        if name == "--session-id":
+            saw_session_id = True
+            session_id = option_value(args, i)
+        elif name in CLAUDE_SESSION_FLAGS:
+            suppress = True
+    if saw_session_id:
+        return session_id, list(args)
+    if suppress:
+        return None, list(args)
+    session_id = str(uuid.uuid4())
+    return session_id, ["--session-id", session_id, *args]
+
+
+def explicit_session(args) -> str | None:
+    """Session id from an obvious flag or a `resume <id>` subcommand, else None."""
+    for i, arg in enumerate(args):
+        name = flag_name(arg)
+        if name in EXPLICIT_SESSION_FLAGS:
+            value = option_value(args, i)
+            if value:
+                return value
+        if arg == "resume" and i + 1 < len(args) and not args[i + 1].startswith("-"):
+            return args[i + 1]
+    return None
+
+
+def append_launch(path: str, payload: dict) -> None:
+    """One O_APPEND write of the full line. Short writes are not retried."""
+    directory = os.path.dirname(path)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
+    line = (json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n").encode("utf-8")
+    fd = os.open(path, os.O_APPEND | os.O_CREAT | os.O_WRONLY, 0o644)
+    try:
+        written = os.write(fd, line)
+    finally:
+        os.close(fd)
+    if written != len(line):
+        raise OSError("short write to launches log")
+
+
+def usage(code: int) -> int:
+    sys.stderr.write(USAGE)
+    return code
+
+
+def main(argv: list[str]) -> int:
+    if argv and argv[0] in ("-h", "--help"):
+        return usage(0)
+    if "--" not in argv:
+        return usage(2)
+    sep = argv.index("--")
+    left, right = argv[:sep], argv[sep + 1:]
+    if len(left) != 2 or not left[0] or not left[1] or not right:
+        return usage(2)
+    bot_id, task = left
+    tool, args = right[0], right[1:]
+    if tool not in TOOLS:
+        return usage(2)
+
+    if tool == "claude":
+        session_id, args = claude_session(args)
+    else:
+        session_id = explicit_session(args)
+
+    payload = {
+        "bot_id": bot_id,
+        "task": task,
+        "tool": tool,
+        "cwd": os.getcwd(),
+        "started_at": local_started_at(),
+        "pid": os.getpid(),
+        "session_id": session_id,
+    }
+    try:
+        save_launch(payload)
+    except OSError as exc:
+        sys.stderr.write(f"grokbot-run: {exc}\n")
+        return 1
+
+    os.environ["GROKBOT_BOT_ID"] = bot_id
+    os.environ["GROKBOT_TASK"] = task
+    binary = os.environ.get(f"GROKBOT_RUN_TOOL_{tool.upper()}") or tool
+    try:
+        os.execvp(binary, [binary, *args])
+    except OSError as exc:
+        sys.stderr.write(f"grokbot-run: exec {binary}: {exc.strerror}\n")
+        return 127
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

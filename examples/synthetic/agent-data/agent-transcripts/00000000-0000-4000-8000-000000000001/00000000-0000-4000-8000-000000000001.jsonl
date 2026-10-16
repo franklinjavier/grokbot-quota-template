@@ -1,0 +1,7 @@
+{"role": "user", "message": {"content": [{"type": "text", "text": "CANARY-TRANSCRIPT-USER please check"}]}}
+{"role": "assistant", "message": {"content": [{"type": "text", "text": "ok"}, {"type": "tool_use", "name": "task", "input": {"agentId": "x", "description": "d", "prompt": "CANARY-CHILD-PROMPT", "model": "sand-default", "subagentType": {"\u0063ustom": {"name": "computerUse"}}}}]}}
+{"role": "tool", "message": {"content": [{"type": "tool_result", "name": "task", "result": {"success": {"agentId": "sand-subagent-00000000-0000-4000-8000-00000000000a", "isBackground": false, "durationMs": 4200, "backgroundReason": null}}}]}}
+{"role": "assistant", "message": {"content": [{"type": "tool_use", "name": "CallMcpTool", "input": {"server": "user-Gmail", "toolName": "search_threads", "arguments": {"q": "CANARY-MCP-ARGS"}}}]}}
+{"role": "assistant", "message": {"content": [{"type": "tool_use", "name": "CallMcpTool", "input": {"namespace": "cursor", "toolName": "Task", "arguments": {"description": "d", "prompt": "CANARY-WRAPPED-PROMPT", "subagent_type": "browserUse", "run_in_background": true}}}]}}
+{"role": "tool", "message": {"content": [{"type": "tool_result", "name": "mcp", "result": "CANARY-MCP-RESULT"}]}}
+{"role": "assistant", "message": {"content": [{"type": "text", "text": "partial line, not yet terminated"}]}}

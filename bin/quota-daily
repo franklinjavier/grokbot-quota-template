@@ -1,0 +1,19 @@
+#!/bin/sh
+# One daily pass. Prints nothing when both commands succeed and no summary
+# line starts with EXCESSIVE:. On a non-zero exit, prints the captured
+# output and exits 1.
+cd "$(dirname "$0")/.." || exit 1
+out=$(mktemp) || exit 1
+cleanup() {
+  rm -f "$out"
+}
+trap cleanup EXIT
+if ! python3 -m quota.collect --quiet --report >"$out" 2>&1; then
+  cat "$out"
+  exit 1
+fi
+if ! python3 -m quota.dashboard >>"$out" 2>&1; then
+  cat "$out"
+  exit 1
+fi
+grep '^EXCESSIVE:' "$out" || true
